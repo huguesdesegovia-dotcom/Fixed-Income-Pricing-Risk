@@ -9,6 +9,23 @@ def bond_price(face_value, coupon_rate, years_to_maturity, yield_rate):
 
     return price
 
+
+def bond_ytm(price, face_value, coupon_rate, years_to_maturity):
+    low = 0.0001
+    high = 1.0
+    tolerance = 1e-6
+
+    while high - low > tolerance:
+        mid = (low + high) / 2
+        calculated_price = bond_price(face_value, coupon_rate, years_to_maturity, mid)
+
+        if calculated_price > price:
+            low = mid
+        else:
+            high = mid
+
+    return (low + high) / 2
+
 if __name__ == "__main__":
     F = 100
     c = 0.05
@@ -17,3 +34,7 @@ if __name__ == "__main__":
 
     price = bond_price(F, c, T, y)
     print("Bond price =", price)
+
+    ytm = bond_ytm(price, F, c, T)
+    print("YTM =", ytm)
+    
