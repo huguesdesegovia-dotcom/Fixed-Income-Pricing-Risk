@@ -45,6 +45,20 @@ def modified_duration(face_value, coupon_rate, years_to_maturity, yield_rate):
     mac_dur = macaulay_duration(face_value, coupon_rate, years_to_maturity, yield_rate)
     return mac_dur / (1 + yield_rate)
 
+
+def convexity(face_value, coupon_rate, years_to_maturity, yield_rate):
+    coupon = face_value * coupon_rate
+    price = bond_price(face_value, coupon_rate, years_to_maturity, yield_rate)
+
+    weighted_sum = 0
+    for t in range(1, years_to_maturity + 1):
+        cash_flow = coupon
+        if t == years_to_maturity:
+            cash_flow += face_value
+        weighted_sum += t * (t + 1) * cash_flow / (1 + yield_rate) ** t
+
+    return weighted_sum / (price * (1 + yield_rate) ** 2)
+
 if __name__ == "__main__":
     F = 100
     c = 0.05
@@ -61,3 +75,5 @@ if __name__ == "__main__":
     mod_dur = modified_duration(F, c, T, y)
     print("Macaulay Duration =", mac_dur)
     print("Modified Duration =", mod_dur)
+    conv = convexity(F, c, T, y)
+    print("Convexity =", conv)
