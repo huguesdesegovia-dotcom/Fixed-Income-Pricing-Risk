@@ -26,6 +26,25 @@ def bond_ytm(price, face_value, coupon_rate, years_to_maturity):
 
     return (low + high) / 2
 
+
+def macaulay_duration(face_value, coupon_rate, years_to_maturity, yield_rate):
+    coupon = face_value * coupon_rate
+    price = bond_price(face_value, coupon_rate, years_to_maturity, yield_rate)
+
+    weighted_sum = 0
+    for t in range(1, years_to_maturity + 1):
+        cash_flow = coupon
+        if t == years_to_maturity:
+            cash_flow += face_value
+        weighted_sum += t * cash_flow / (1 + yield_rate) ** t
+
+    return weighted_sum / price
+
+
+def modified_duration(face_value, coupon_rate, years_to_maturity, yield_rate):
+    mac_dur = macaulay_duration(face_value, coupon_rate, years_to_maturity, yield_rate)
+    return mac_dur / (1 + yield_rate)
+
 if __name__ == "__main__":
     F = 100
     c = 0.05
@@ -37,4 +56,8 @@ if __name__ == "__main__":
 
     ytm = bond_ytm(price, F, c, T)
     print("YTM =", ytm)
-    
+
+    mac_dur = macaulay_duration(F, c, T, y)
+    mod_dur = modified_duration(F, c, T, y)
+    print("Macaulay Duration =", mac_dur)
+    print("Modified Duration =", mod_dur)
